@@ -1,30 +1,24 @@
-pipeline{
-    agent none
+pipeline {
+    agent any
     tools{
-        jdk 'myjava'
         maven 'mymaven'
     }
-    parameters{
-        choice(name:'VERSION',choices:['1.1.0','1.2.0','1.3.0'],description:'version of the code')
-        booleanParam(name: 'executeTests',defaultValue: true,description:'tc validity')
+    environment{
+        NEW_VERSION='1.4.0'
     }
-    stages{
-        stage("COMPILE"){
-            agent {label 'linux_slave'}
+    
+    stages {
+        stage('COMPILE') {
             steps{
                 script{
                     echo "Compiling the code"
+                    git 'https://github.com/doketanmay/addressbook.git'
                     sh 'mvn compile'
                 }
             }
+            
         }
-        stage("UNITTEST"){
-            agent any
-            when{
-                expression{
-                    params.executeTests == true
-                }
-            }
+        stage("UnitTest"){
             steps{
                 script{
                     echo "Testing the code"
@@ -36,34 +30,17 @@ pipeline{
                     junit 'target/surefire-reports/*.xml'
                 }
             }
+            
         }
-         stage("PACKAGE"){
-             agent {label 'linux_slave'}
-            when{
-                expression{
-                    BRANCH_NAME == 'master'
-                }
-            }
+        stage("Package"){
             steps{
                 script{
-                    echo "Packaging the code"
+                    echo "Packing the code"
+                    echo "Building new version ${NEW_VERSION}"
                     sh 'mvn package'
                 }
             }
-        }
-         stage("DEPLOY"){
-            agent any
-             when{
-                expression{
-                    BRANCH_NAME == 'master'
-                }
-            }
-            steps{
-                script{
-                    echo "Deploying the app"
-                    echo "Deploying version ${params.VERSION}"
-                }
-            }
+            
         }
     }
 }
