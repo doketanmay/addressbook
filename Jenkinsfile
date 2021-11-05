@@ -19,6 +19,11 @@ pipeline {
             
         }
         stage("UnitTest"){
+            when{
+                expression{
+                    BRANCH_NAME == 'master'
+                }
+            }
             steps{
                 script{
                     echo "Testing the code"
@@ -38,6 +43,20 @@ pipeline {
                     echo "Packing the code"
                     echo "Building new version ${NEW_VERSION}"
                     sh 'mvn package'
+                }
+            }
+            
+        }
+        stage("Deploy"){
+            when{
+                expression{
+                    BRANCH_NAME == 'master'
+                }
+            }
+            steps{
+                script{
+                    echo "Depoying the app"
+                    echo "Deploying ${NEW_VERSION}"
                 }
             }
             
