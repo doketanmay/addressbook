@@ -12,6 +12,7 @@ pipeline{
           
             steps{
                 script{
+                    echo "Hello"
                     echo "Compiling the code"
                     sh 'mvn compile'
                 }
