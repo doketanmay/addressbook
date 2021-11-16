@@ -19,11 +19,6 @@ pipeline {
             
         }
         stage("UnitTest"){
-            when{
-                expression{
-                    BRANCH_NAME == 'master'
-                }
-            }
             steps{
                 script{
                     echo "Testing the code"
@@ -47,19 +42,31 @@ pipeline {
             }
             
         }
-        stage("Deploy"){
-            when{
-                expression{
-                    BRANCH_NAME == 'master'
-                }
-            }
+        stage("BuildDockerImage"){
+            
             steps{
                 script{
-                    echo "Depoying the app"
-                    echo "Deploying ${NEW_VERSION}"
+                    echo "Building the image"
+                    echo "Building ${NEW_VERSION}"
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
+                    sh 'sudo docker build -t doketanmay01/myprivaterepo:$BUILD_NUMBER .'
+                    sh 'sudo docker login -u $USERNAME -p $PASSWORD'
+                    sh 'sudo docker push doketanmay01/myprivaterepo:$BUILD_NUMBER'
+                    
+                    }
+
+                    
                 }
             }
             
+        }
+        stage("DeployDockerContainer"){
+            steps{
+                script{
+                    echo "Deploying the app"
+                    sh 'sudo docker run -itd -P doketanmay01/myprivaterepo:$BUILD_NUMBER'
+                }
+            }
         }
     }
 }
