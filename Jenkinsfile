@@ -12,7 +12,7 @@ pipeline {
             steps{
                 script{
                     echo "Compiling the code"
-                    git 'https://github.com/doketanmay/addressbook.git'
+    
                     sh 'mvn compile'
                 }
             }
