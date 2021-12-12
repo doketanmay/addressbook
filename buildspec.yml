@@ -13,7 +13,7 @@ phases:
   post_build:
     commands:
       - echo Build completed on 'date'
-  artifacts:
-    files:
-      - target/addressbook.war
-    discard-paths: yes
+artifacts:
+  files:
+    - target/addressbook.war
+  discard-paths: yes
