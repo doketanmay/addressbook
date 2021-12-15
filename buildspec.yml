@@ -16,4 +16,6 @@ phases:
 artifacts:
   files:
     - target/addressbook.war
+    - appspec.yml
+    - 'deploy-scripts/**/*'
   discard-paths: yes
