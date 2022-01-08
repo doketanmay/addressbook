@@ -5,6 +5,7 @@ pipeline {
     }
     environment{
         NEW_VERSION='1.4.0'
+        APP_NAME='java-mvn-app'
     }
     
     stages {
@@ -60,11 +61,11 @@ pipeline {
             }
             
         }
-        stage("DeployDockerContainer"){
+        stage("Deploy on EKS"){
             steps{
                 script{
                     echo "Deploying the app"
-                    sh 'sudo docker run -itd -P doketanmay01/myprivaterepo:$BUILD_NUMBER'
+                    sh 'envsubst < java-mvn-deploy-svc.yml | sudo /usr/local/bin/kubectl apply -f -'
                 }
             }
         }
